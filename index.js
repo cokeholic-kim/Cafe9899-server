@@ -19,15 +19,40 @@ app.use("/upload",express.static("upload"));
 //storage생성
 const storage = multer.diskStorage({
     destination: (req,file,cb)=>{
-        cb(null,'upload/event')
+        cb(null,'upload/menu')
     },
     filename:(req,file,cb)=>{
         const newFilename = file.originalname
         cb(null,newFilename)
     }
 })
+
+const posting = multer.diskStorage({
+    destination: (req,file,cb)=>{
+        cb(null,'upload/post')
+    },
+    filename:(req,file,cb)=>{
+        const newFilename = file.originalname
+        cb(null,newFilename)
+    }
+})
+
 //upload객체 생성하기
 const upload = multer({ storage : storage });
+
+app.post("/upload",upload.single("img"),async (req,res)=>{
+    console.log("등록됨")
+    res.send({
+        imageURL:req.file.filename
+    })
+})
+
+app.post("/uploadPost",multer({storage:posting}).single("imgpost"),async (req,res)=>{
+    console.log("등록됨")
+    res.send({
+        imageURL:req.file.filename
+    })
+})
 
 //mysql 연결 생성
 const conn = mysql.createConnection({
@@ -137,6 +162,21 @@ app.patch("/updatePass",async (req, res)=>{
     }
 })
 
+//객실등록요청
+app.post('/menus',async (req,res)=>{
+    const {m_name, m_price, m_desc, m_img} = req.body;
+    conn.query(`insert into menus(m_name, m_price, m_desc, m_img) values(?,?,?,?)`,
+    [m_name, m_price, m_desc, m_img]
+    ,(err,result,field)=>{
+        if(result){
+            console.log(result)
+            res.send('ok')
+        }else{
+            console.log(err)
+        }
+    })
+
+})
 
 
 
