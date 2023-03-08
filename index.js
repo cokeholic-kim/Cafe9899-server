@@ -161,8 +161,7 @@ app.patch("/updatePass",async (req, res)=>{
         });
     }
 })
-
-//객실등록요청
+//메뉴등록요청
 app.post('/menus',async (req,res)=>{
     const {m_name, m_price, m_desc, m_img} = req.body;
     conn.query(`insert into menus(m_name, m_price, m_desc, m_img) values(?,?,?,?)`,
@@ -175,8 +174,35 @@ app.post('/menus',async (req,res)=>{
             console.log(err)
         }
     })
+})
+//포스팅등록요청
+app.post('/posts',async (req,res)=>{
+    const {p_hashtag,p_img,p_desc} = req.body;
+    conn.query(`insert into posts(p_hashtag,p_img,p_desc) values(?,?,?)`,
+    [p_hashtag,p_img,p_desc]
+    ,(err,result,field)=>{
+        if(result){
+            console.log(result)
+            res.send('ok')
+        }else{
+            console.log(err)
+        }
+    })
+})
+
+app.get(`/getMenu`,(req,res)=>{
+    conn.query(`select * from menus`,(error,result,field)=>{
+        if(error){
+            res.send(error)
+            console.log(error)
+        }else{
+            res.send(result)
+            console.log(result)
+        }
+    })
 
 })
+
 
 
 
