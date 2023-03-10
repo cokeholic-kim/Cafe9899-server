@@ -190,6 +190,19 @@ app.post('/posts',async (req,res)=>{
     })
 })
 
+//포스팅 출력
+app.get('/getPost',(req,res)=>{
+    conn.query(`select * from posts`,(error,result,field)=>{
+        if(error){
+            res.send(error)
+            console.log(error)
+        }else{
+            res.send(result)
+            console.log(result)
+        }
+    })
+})
+
 app.get(`/getMenu`,(req,res)=>{
     conn.query(`select * from menus`,(error,result,field)=>{
         if(error){
@@ -201,6 +214,22 @@ app.get(`/getMenu`,(req,res)=>{
         }
     })
 
+})
+
+// 예약등록
+app.post(`/reservation`,async (req,res)=>{
+    const {o_name,o_pickupday,o_pickuptime,o_totalP,o_product} = req.body;
+    conn.query(`insert into orders(o_name,o_pickupday,o_pickuptime,o_totalP,o_product) values(?,?,?,?,?)`,
+    [o_name,o_pickupday,o_pickuptime,o_totalP,o_product]
+    ,(error,result,field) =>{
+        if(result){
+            console.log(result)
+            res.send("ok")
+        }else{
+            console.log(error)
+        }
+    }
+    )
 })
 
 
