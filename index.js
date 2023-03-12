@@ -161,20 +161,6 @@ app.patch("/updatePass",async (req, res)=>{
         });
     }
 })
-//메뉴등록요청
-app.post('/menus',async (req,res)=>{
-    const {m_name, m_price, m_desc, m_img} = req.body;
-    conn.query(`insert into menus(m_name, m_price, m_desc, m_img) values(?,?,?,?)`,
-    [m_name, m_price, m_desc, m_img]
-    ,(err,result,field)=>{
-        if(result){
-            console.log(result)
-            res.send('ok')
-        }else{
-            console.log(err)
-        }
-    })
-})
 //포스팅등록요청
 app.post('/posts',async (req,res)=>{
     const {p_hashtag,p_img,p_desc} = req.body;
@@ -202,7 +188,51 @@ app.get('/getPost',(req,res)=>{
         }
     })
 })
+//메뉴등록요청
+app.post('/menus',async (req,res)=>{
+    const {m_name, m_price, m_desc, m_img, m_category} = req.body;
+    conn.query(`insert into menus(m_name, m_price, m_desc, m_img, m_category) values(?,?,?,?,?)`,
+    [m_name, m_price, m_desc, m_img, m_category]
+    ,(err,result,field)=>{
+        if(result){
+            console.log(result)
+            res.send('ok')
+        }else{
+            console.log(err)
+        }
+    })
+})
+//메뉴 수정하기
+app.post('/menuUpdate',async (req,res)=>{
+    const {m_name, m_price, m_desc, m_img, m_category,m_number} = req.body;
+    conn.query(`update menus set m_name='${m_name}' , m_price=${m_price} , m_desc='${m_price}' , m_img='${m_img}' , m_category='${m_category}'  where m_number=${m_number}`,
+    [m_name, m_price, m_desc, m_img, m_category]
+    ,(err,result,field)=>{
+        if(result){
+            console.log(result)
+            res.send('ok')
+        }else{
+            console.log(err)
+        }
+    })
+})
 
+//메뉴 삭제하기
+app.post('/menuDel',async (req,res)=>{
+    console.log(req.body)
+    const {m_number} = req.body;
+    conn.query(`delete from menus where m_number = ${m_number}`,(err,result,field)=>{
+        if(result){
+            console.log(result)
+            res.send('ok')
+        }else{
+            console.log(err)
+        }
+    })
+})
+
+
+// 메뉴받아오기
 app.get(`/getMenu`,(req,res)=>{
     conn.query(`select * from menus`,(error,result,field)=>{
         if(error){
@@ -213,7 +243,33 @@ app.get(`/getMenu`,(req,res)=>{
             console.log(result)
         }
     })
+})
+// 메뉴1개만 받아오기
+app.get(`/getOneMenu/:number`,(req,res)=>{
+    const {number} = req.params
+    conn.query(`select * from menus where m_number = ${number}`,(error,result,field)=>{
+        if(error){
+            res.send(error)
+            console.log(error)
+        }else{
+            res.send(result)
+            console.log(result)
+        }
+    })
 
+})
+
+//예약 받아오기
+app.get(`/getOrder`,(req,res)=>{
+    conn.query(`select * from orders order by o_pickupday asc`,(error,result,field)=>{
+        if(error){
+            res.send(error)
+            console.log(error)
+        }else{
+            res.send(result)
+            console.log(result)
+        }
+    })
 })
 
 // 예약등록
@@ -230,6 +286,16 @@ app.post(`/reservation`,async (req,res)=>{
         }
     }
     )
+})
+// 예약삭제
+app.post(`/deleteOrder`,async (req,res)=>{
+    const{ordernumber} = (req.body)
+    conn.query(`delete from orders where o_ordernumber = ${ordernumber}`,(error,result,field)=>{
+        if(result){
+            res.send('ok')
+        }
+        console.log(error)
+    })
 })
 
 
