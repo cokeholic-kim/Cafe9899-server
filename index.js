@@ -163,9 +163,9 @@ app.patch("/updatePass",async (req, res)=>{
 })
 //포스팅등록요청
 app.post('/posts',async (req,res)=>{
-    const {p_hashtag,p_img,p_desc} = req.body;
-    conn.query(`insert into posts(p_hashtag,p_img,p_desc) values(?,?,?)`,
-    [p_hashtag,p_img,p_desc]
+    const {p_hashtag,p_img,p_desc,p_user} = req.body;
+    conn.query(`insert into posts(p_hashtag,p_img,p_desc,p_user) values(?,?,?,?)`,
+    [p_hashtag,p_img,p_desc,p_user]
     ,(err,result,field)=>{
         if(result){
             console.log(result)
@@ -175,6 +175,20 @@ app.post('/posts',async (req,res)=>{
         }
     })
 })
+//포스팅 좋아요요청
+app.post('/postLike',async (req,res)=>{
+    const {p_like,p_id} = req.body;
+    conn.query(`update posts set p_like = ${p_like} where p_id = ${p_id}`,
+    (err,result,field)=>{
+        if(result){
+            console.log(result)
+            res.send('ok')
+        }else{
+            console.log(err)
+        }
+    })
+})
+
 
 //포스팅 출력
 app.get('/getPost',(req,res)=>{
@@ -188,6 +202,36 @@ app.get('/getPost',(req,res)=>{
         }
     })
 })
+
+//포스팅댓글등록요청
+app.post('/addComment',async (req,res)=>{
+    const {c_comment,c_postid,c_user} = req.body;
+    conn.query(`insert into comments(c_comment,c_postid,c_user) values(?,?,?)`,
+    [c_comment,c_postid,c_user]
+    ,(err,result,field)=>{
+        if(result){
+            console.log(result)
+            res.send('ok')
+        }else{
+            console.log(err)
+        }
+    })
+})
+//포스팅댓글가져오기요청
+app.get('/getComment',(req,res)=>{
+    const {p_id} = req.body;
+    conn.query(`select * from comments where c_postid = 11 `,(error,result,field)=>{
+        if(error){
+            res.send(error)
+            console.log(error)
+        }else{
+            res.send(result)
+            console.log(result)
+        }
+    })
+})
+
+
 //메뉴등록요청
 app.post('/menus',async (req,res)=>{
     const {m_name, m_price, m_desc, m_img, m_category} = req.body;
@@ -206,8 +250,7 @@ app.post('/menus',async (req,res)=>{
 app.post('/menuUpdate',async (req,res)=>{
     const {m_name, m_price, m_desc, m_img, m_category,m_number} = req.body;
     conn.query(`update menus set m_name='${m_name}' , m_price=${m_price} , m_desc='${m_price}' , m_img='${m_img}' , m_category='${m_category}'  where m_number=${m_number}`,
-    [m_name, m_price, m_desc, m_img, m_category]
-    ,(err,result,field)=>{
+    (err,result,field)=>{
         if(result){
             console.log(result)
             res.send('ok')
