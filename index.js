@@ -188,6 +188,19 @@ app.post('/postLike',async (req,res)=>{
         }
     })
 })
+//모달창 열었을 때 좋아요 받아오기
+app.get('/getLike/:id',(req,res)=>{
+    const {id} =req.params
+    conn.query(`select p_like from posts where p_id = ${id}`,(error,result,field)=>{
+        if(error){
+            res.send(error)
+            console.log(error)
+        }else{
+            res.send(result)
+            console.log(result)
+        }
+    })
+})
 
 
 //포스팅 출력
@@ -218,9 +231,9 @@ app.post('/addComment',async (req,res)=>{
     })
 })
 //포스팅댓글가져오기요청
-app.get('/getComment',(req,res)=>{
-    const {p_id} = req.body;
-    conn.query(`select * from comments where c_postid = 11 `,(error,result,field)=>{
+app.get('/getComment/:id',(req,res)=>{
+    const {id} = req.params
+    conn.query(`select * from comments where c_postid = ${id} `,(error,result,field)=>{
         if(error){
             res.send(error)
             console.log(error)
